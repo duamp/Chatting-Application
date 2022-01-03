@@ -1,33 +1,27 @@
-const users = [];
+const users = []; //Array of Current Users.
 
-//Join user to chat 
-function userJoin(id, username, room){
+function userJoin(id, username, room){ //Add new user to Array.
     const user = {id, username, room};
-
     users.push(user);
     return user;
 }
 
-//get current user
-function getCurrentUser(id){
+function getCurrentUser(id){ //Get User Id. Created from socket.id.
     return users.find(user =>user.id = id);
 }
 
-//User Leaves Chat
-function userLeave(id){
+function userLeave(id){ //Find user in Array, remove them.
     const index = users.findIndex(user => user.id===id);
-
-    if(index !== -1){
+    if(index !== -1){   //-1 means they never existsed.
         return users.splice(index, 1)[0];
     }
 }
 
-//Get room users 
-function getRoomUsers(room){
+function getRoomUsers(room){ //Find the number of users in a certain room.
     return users.filter(user => user.room === room);
 }
 
-module.exports ={
+module.exports ={ //export functions to use in server.js/main.js
     getCurrentUser,
     userJoin,
     getRoomUsers,

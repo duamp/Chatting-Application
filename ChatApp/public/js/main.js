@@ -1,56 +1,47 @@
 const chatForm = document.getElementById('chat-form');
-const chatMessages = document.querySelector('.chat-messages');
+const chatMessages = document.querySelector('.chat-messages'); //finds first occurance in CSS document.
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 
-// Get username and room from URL
+//1. Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
-const socket = io();
+const socket = io(); //Socket -> Client side
 
-// Join chatroom
-socket.emit('joinRoom', { username, room });
+socket.emit('joinRoom', { username, room });  //2. Send 'joinRoom' task to server.
 
-// Get room and users
-socket.on('roomUsers', ({ room, users }) => {
+socket.on('roomUsers', ({ room, users }) => { //3. Catch 'roomUsers' and get room name + users.
   outputRoomName(room);
   outputUsers(users);
 });
 
-// Message from server
-socket.on('message', (message) => {
+socket.on('message', (message) => { //4. Catch message from server, passes to functions.
   console.log(message);
-  outputMessage(message);
+  outputMessage(message); 
 
-  // Scroll down
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll down
 });
 
-// Message submit
-chatForm.addEventListener('submit', (e) => {
+chatForm.addEventListener('submit', (e) => { //5. Listens if user presses send message button, then performs event.
   e.preventDefault();
 
-  // Get message text
-  let msg = e.target.elements.msg.value;
+  let msg = e.target.elements.msg.value;   //Get sent text message.
 
-  msg = msg.trim();
+  msg = msg.trim(); //Remove excess characters from message.
 
   if (!msg) {
     return false;
   }
 
-  // Emit message to server
-  socket.emit('chatMessage', msg);
+  socket.emit('chatMessage', msg);   //6. Send message to server, to send to other clients.
 
-  // Clear input
-  e.target.elements.msg.value = '';
+  e.target.elements.msg.value = '';   // Clear input
   e.target.elements.msg.focus();
 });
 
-// Output message to DOM
-function outputMessage(message) {
+function outputMessage(message) { //7. Add new messages to the DOM in div for display.
   const div = document.createElement('div');
   div.classList.add('message');
   const p = document.createElement('p');
@@ -65,13 +56,11 @@ function outputMessage(message) {
   document.querySelector('.chat-messages').appendChild(div);
 }
 
-// Add room name to DOM
-function outputRoomName(room) {
+function outputRoomName(room) { //Add room name to DOM
   roomName.innerText = room;
 }
 
-// Add users to DOM
-function outputUsers(users) {
+function outputUsers(users) { // Add users to DOM
   userList.innerHTML = '';
   users.forEach((user) => {
     const li = document.createElement('li');
@@ -88,3 +77,4 @@ document.getElementById('leave-btn').addEventListener('click', () => {
   } else {
   }
 });
+
